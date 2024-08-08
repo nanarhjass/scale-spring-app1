@@ -8,9 +8,6 @@ pipeline {
         CHIEF_AUTHOR = 'Asher'
         RETRY_CNT = 3
     }
-    parameters {
-        { choice(name: 'CHOICES', choices: ['one', 'two', 'three'], description: ''
-    }
     triggers {
         cron('H */4 * * 1-5')
     }
