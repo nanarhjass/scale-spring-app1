@@ -23,10 +23,5 @@ pipeline {
                 sh 'maven compile'
             }
         }
-        stage('Deploy') {
-            steps {
-                
-            }
-        }
     }
 }
