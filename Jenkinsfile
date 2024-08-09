@@ -30,7 +30,7 @@ pipeline {
                 stage('Scan') {
             steps {
                 withSonarQubeEnv('sonar') {
-                 sh 'mvn clean package sonar:sonar' }
+                 sh 'mvn  -Dproject.settings=./sonar.properties sonar:sonar' }
             }
         }
     }
