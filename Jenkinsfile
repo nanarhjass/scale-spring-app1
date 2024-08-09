@@ -7,7 +7,7 @@ pipeline {
     environment {
         CHIEF_AUTHOR = 'Asher'
         RETRY_CNT = 3
-        SONAR_SCANNER = tool 'sonar'
+        ScannerHome = tool name: 'sonar', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
     }
     parameters {
         choice(name: 'CHOICES', choices: ['one', 'two', 'three'], description: '')
@@ -30,7 +30,7 @@ pipeline {
                 stage('Scan') {
             steps {
                 withSonarQubeEnv('sonar') {
-                sh "${SONAR_SCANNER}/var/jenkins_home/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonar -Dsonar.projectKey=nanarhjass_scale-spring-app1 -Dsonar.organization=nanarhjass -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=1e8588b846b0881847653620fa5e350970723bbf"}
+                sh "${ScannerHome}/bin/sonar -Dsonar.projectKey=nanarhjass_scale-spring-app1 -Dsonar.organization=nanarhjass -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=1e8588b846b0881847653620fa5e350970723bbf"}
             }
         }
     }
