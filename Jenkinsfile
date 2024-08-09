@@ -30,7 +30,7 @@ pipeline {
                 stage('Scan') {
             steps {
                 withSonarQubeEnv('sonar') {
-                 sh 'mvn  -Dproject.settings=./sonar.properties sonar:sonar' }
+                sh "${SONAR_HOME}/bin/sonar -Dsonar.projectKey=nanarhjass_scale-spring-app1 -Dsonar.organization=nanarhjass -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=1e8588b846b0881847653620fa5e350970723bbf"
             }
         }
     }
