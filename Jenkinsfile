@@ -7,6 +7,7 @@ pipeline {
     environment {
         CHIEF_AUTHOR = 'Asher'
         RETRY_CNT = 3
+        SONAR_SCANNER = tool 'sonar'
     }
     parameters {
         choice(name: 'CHOICES', choices: ['one', 'two', 'three'], description: '')
@@ -24,6 +25,12 @@ pipeline {
         stage('Compile') {
             steps {
                 sh "mvn compile"
+            }
+        }
+                stage('Scan') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                 sh 'mvn clean package sonar:sonar' }
             }
         }
     }
