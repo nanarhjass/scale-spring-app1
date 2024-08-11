@@ -31,7 +31,7 @@ pipeline {
                 script {
                    def scannerHome = tool name: 'sonar', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
                      withSonarQubeEnv('sonar') {
-                     sh "${scannerHome} -Dsonar.projectKey=nanarhjass_scale-spring-app1 -Dsonar.organization=nanarhjass -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=1e8588b846b0881847653620fa5e350970723bbf"}
+                     sh "${scannerHome} -Dsonar.projectKey=nanarhjass_scale-spring-app1 -Dsonar.organization=nanarhjass -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=113f78d618ffd168ced100d33eaffb3b8f6c0169"}
                 }
             }
         }
