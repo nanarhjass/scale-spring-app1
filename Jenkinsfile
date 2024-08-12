@@ -1,40 +1,60 @@
 pipeline {
-    agent any
-    tools {
+    agent {label 'master'}
+    tools{
         jdk 'jdk17'
         maven 'maven'
     }
     environment {
-        CHIEF_AUTHOR = 'Asher'
+        CHEIF_AUTHOR = 'Asher'
         RETRY_CNT = 3
     }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '3')) 
+        disableConcurrentBuilds()
+        quietPeriod(5)
+    }
     parameters {
-        choice(name: 'CHOICES', choices: ['one', 'two', 'three'], description: '')
+     choice(name: 'TARGET_ENV', choices: ['UAT', 'SIT', 'STAGING'], description: 'Pick something')
     }
-    triggers {
-        cron('H */4 * * 1-5')
-    }
-
+ 
     stages {
         stage('Checkout SCM') {
             steps {
                 checkout scm
+                sh "echo $CHEIF_AUTHOR"
             }
         }
         stage('Compile') {
             steps {
-                sh "mvn compile"
+                sh 'mvn compile'
             }
         }
-        stage('Scan') {
+        stage('Code Scan') {
             steps {
-                script {
-                   def scannerHome = tool name: 'sonar', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                     withSonarQubeEnv('sonar') {
-                     sh "${scannerHome} -Dsonar.projectKey=nanarhjass_scale-spring-app1 -Dsonar.organization=nanarhjass -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=113f78d618ffd168ced100d33eaffb3b8f6c0169"}
+                withSonarQubeEnv('sonar') {
+                    sh 'mvn  -Dsonar.projectKey=scale-spring-app1 -Dsonar.organization=nanarhjass org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
                 }
+               
             }
         }
+         stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+         stage('Package') {
+            steps {
+                sh 'mvn package'
+                sh 'echo done'
+            }
+        }
+        
+    }
+    post {
+       always {
+           sh 'echo Completed'
+       }
     }
 }
+
 
