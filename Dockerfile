@@ -1,11 +1,3 @@
-FROM adoptopenjdk/openjdk17
-    
-EXPOSE 8080
- 
-ENV APP_HOME /usr/src/app
-
-COPY target/*.jar $APP_HOME/app.jar
-
-WORKDIR $APP_HOME
-
-CMD ["java", "-jar", "app.jar"]
+FROM openjdk17
+ADD target/*.jar $APP_HOME/app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
