@@ -7,6 +7,9 @@ pipeline {
     environment {
         CHEIF_AUTHOR = 'Asher'
         RETRY_CNT = 3
+        DOCKERHUB_CREDENTIALS = 'dockerID'
+        DOCKER_IMAGE = 'nanarh1/jenkinsproject'
+        IMAGE_TAG = 'latest'
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '3')) 
@@ -41,6 +44,32 @@ pipeline {
                 sh 'echo done'
             }
         }
+         stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
+                }
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://hub.docker.com/', "${DOCKERHUB_CREDENTIALS}") {
+                        echo "Logged into Docker Hub"
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://hub.docker.com/', "${DOCKERHUB_CREDENTIALS}") {
+                        docker.image("${DOCKER_IMAGE}:${IMAGE_TAG}").push()
+                    }
+                }
+            }
         
     }
     post {
