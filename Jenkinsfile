@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    tools{
+    tools {
         jdk 'jdk17'
         maven 'maven'
     }
@@ -17,7 +17,7 @@ pipeline {
         quietPeriod(5)
     }
     parameters {
-     choice(name: 'TARGET_ENV', choices: ['UAT', 'SIT', 'STAGING'], description: 'Pick something')
+        choice(name: 'TARGET_ENV', choices: ['UAT', 'SIT', 'STAGING'], description: 'Pick something')
     }
  
     stages {
@@ -33,18 +33,20 @@ pipeline {
             }
         }
 
-         stage('Test') {
+        stage('Test') {
             steps {
                 sh 'mvn test'
             }
         }
-         stage('Package') {
+        
+        stage('Package') {
             steps {
                 sh 'mvn package'
                 sh 'echo done'
             }
         }
-         stage('Build Docker Image') {
+        
+        stage('Build Docker Image') {
             steps {
                 script {
                     docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
@@ -55,7 +57,7 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://hub.docker.com/', "${DOCKERHUB_CREDENTIALS}") {
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_CREDENTIALS}") {
                         echo "Logged into Docker Hub"
                     }
                 }
@@ -65,17 +67,17 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://hub.docker.com/', "${DOCKERHUB_CREDENTIALS}") {
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_CREDENTIALS}") {
                         docker.image("${DOCKER_IMAGE}:${IMAGE_TAG}").push()
                     }
                 }
             }
-        
+        }
     }
+    
     post {
-       always {
-           sh 'echo Completed'
-       }
-     }
- }
+        always {
+            sh 'echo Completed'
+        }
+    }
 }
