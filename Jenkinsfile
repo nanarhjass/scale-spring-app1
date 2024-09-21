@@ -32,6 +32,17 @@ pipeline {
                 sh 'mvn compile'
             }
         }
+         stage('Code Scan') {
+            steps {
+                withSonarQubeEnv('sonar') {
+    sh '''
+        mvn -Dsonar.projectKey=jassproject -Dsonar.organization=Administrator \
+        sonar:sonar
+    '''
+}
+               
+            }
+        }
 
         stage('Test') {
             steps {
