@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+  namespace: my-app-namespace   # Specify the namespace you created
+spec:
+  replicas: 2   # Adjust the number of replicas if needed
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app-container
+        image: nanarh1/jenkinsproject:latest  # Your Docker image
+        ports:
+        - containerPort: 8080  # Adjust based on your application port
