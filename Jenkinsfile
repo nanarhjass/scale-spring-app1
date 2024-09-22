@@ -76,15 +76,16 @@ pipeline {
 
          stage('Deploy to Kubernetes') {
             steps {
-                script {
+               script {
                     // Use the secret file
                     withCredentials([file(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBE_CONFIG_FILE')]) {
-                        sh '''
-                        export KUBECONFIG=$KUBE_CONFIG_FILE
-                        kubectl apply -f k8s-manifests/deployment.yaml
-                        kubectl apply -f k8s-manifests/service.yaml
-                        '''
-                    }
+                        // Set KUBECONFIG and run kubectl commands
+                        withEnv(["KUBECONFIG=$KUBE_CONFIG_FILE"]) {
+                            sh '''
+                            kubectl apply -f k8s-manifests/deployment.yaml
+                            kubectl apply -f k8s-manifests/service.yaml
+                            '''
+                        }
                 }
             }
         }
