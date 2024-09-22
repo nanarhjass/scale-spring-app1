@@ -10,6 +10,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerID'
         DOCKER_IMAGE = 'nanarh1/jenkinsproject'
         IMAGE_TAG = 'latest'
+        KUBECONFIG_CREDENTIALS = 'kubeconfig' // Replace with your secret ID for Kubeconfig
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '3')) 
@@ -68,6 +69,22 @@ pipeline {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_CREDENTIALS}") {
                         docker.image("${DOCKER_IMAGE}:${IMAGE_TAG}").push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    // Configure Kubeconfig
+                    withCredentials([string(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBE_CONFIG')]) {
+                        sh '''
+                        echo "$KUBE_CONFIG" > $HOME/.kube/config
+                        chmod 600 $HOME/.kube/config
+                        kubectl apply -f k8s-manifests/deployment.yaml
+                        kubectl apply -f k8s-manifests/service.yaml
+                        '''
                     }
                 }
             }
