@@ -74,14 +74,13 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Configure Kubeconfig
-                    withCredentials([string(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBE_CONFIG')]) {
+                    // Use the secret file
+                    withCredentials([file(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBE_CONFIG_FILE')]) {
                         sh '''
-                        echo "$KUBE_CONFIG" > $HOME/.kube/config
-                        chmod 600 $HOME/.kube/config
+                        export KUBECONFIG=$KUBE_CONFIG_FILE
                         kubectl apply -f k8s-manifests/deployment.yaml
                         kubectl apply -f k8s-manifests/service.yaml
                         '''
@@ -90,6 +89,7 @@ pipeline {
             }
         }
     }
+    
     
     post {
         always {
