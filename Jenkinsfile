@@ -10,6 +10,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerID'
         DOCKER_IMAGE = 'nanarh1/jenkinsproject'
         IMAGE_TAG = 'latest'
+        KUBECONFIG_CREDENTIALS = 'kubeconfig'  // Define your kubeconfig credentials ID
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '3')) 
@@ -19,10 +20,12 @@ pipeline {
     parameters {
         choice(name: 'TARGET_ENV', choices: ['UAT', 'SIT', 'STAGING'], description: 'Pick something')
     }
+
+    stages {
         stage('Checkout SCM') {
             steps {
                 checkout scm
-                sh "echo $CHEIF_AUTHOR"
+                sh "echo ${CHEIF_AUTHOR}"
             }
         }
         // Other stages...
@@ -30,16 +33,18 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                  withCredentials([file(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBE_CONFIG_FILE')]) {
-                        withEnv(["KUBECONFIG=$KUBE_CONFIG_FILE"])  {
-                        sh 'chmod +x k8s-manifests/deploy.sh'  // Update path if needed
-                        sh 'k8s-manifests/deploy.sh'  // Update path if needed
+                    withCredentials([file(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBE_CONFIG_FILE')]) {
+                        withEnv(["KUBECONFIG=$KUBE_CONFIG_FILE"]) {
+                            sh 'chmod +x k8s-manifests/deploy.sh'  // Make deploy script executable
+                            sh 'k8s-manifests/deploy.sh'  // Execute the deploy script
+                        }
                     }
                 }
             }
         }
         // Other stages...
     }
+
     post {
         always {
             sh 'echo Completed'
