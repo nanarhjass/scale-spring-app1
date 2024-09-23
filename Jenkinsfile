@@ -73,10 +73,17 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+        stage('List Files in Workspace') {
+    steps {
+        sh 'ls -la'  // List all files
+        sh 'ls -la .k8s-manifests'  // List files in the .k8s-manifests directory
+    }
+}
+
+stage('Deploy to Kubernetes') {
+    steps {
+        script {
+            withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                 // Make deploy.sh executable
                 sh 'chmod +x .k8s-manifests/deploy.sh'  // Update path if needed
 
