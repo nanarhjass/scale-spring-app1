@@ -78,7 +78,7 @@ pipeline {
                 script {
                     withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                         // Make deploy.sh executable if it's not already
-                        sh 'chmod +x deploy.sh'
+                        sh 'chmod +x .k8s-manifests/deploy.sh'
                         // Execute the deploy script
                         sh '.k8s-manifests/deploy.sh'
                     }
