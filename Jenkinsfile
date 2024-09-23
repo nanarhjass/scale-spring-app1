@@ -21,59 +21,21 @@ pipeline {
     }
 
     stages {
+        stage('Install kubectl') {
+            steps {
+                sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
+                sh 'chmod +x ./kubectl'
+                sh 'mv ./kubectl /usr/local/bin/kubectl'
+            }
+        }
         stage('Checkout SCM') {
             steps {
                 checkout scm
                 sh "echo $CHEIF_AUTHOR"
             }
         }
-        stage('Compile') {
-            steps {
-                sh 'mvn compile'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-        }
-        stage('Package') {
-            steps {
-                sh 'mvn package'
-                sh 'echo done'
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
-                }
-            }
-        }
-        stage('Login to Docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_CREDENTIALS}") {
-                        echo "Logged into Docker Hub"
-                    }
-                }
-            }
-        }
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_CREDENTIALS}") {
-                        docker.image("${DOCKER_IMAGE}:${IMAGE_TAG}").push()
-                    }
-                }
-            }
-        }
-        stage('List Files in Workspace') {
-            steps {
-                sh 'ls -la'  // List all files
-                sh 'ls -la k8s-manifests'  // List files in the k8s-manifests directory
-            }
-        }
+        // Other stages...
+
         stage('Deploy to Kubernetes') {
             steps {
                 script {
@@ -82,23 +44,13 @@ pipeline {
                         file(credentialsId: 'client.crt', variable: 'CLIENT_CERT'),
                         file(credentialsId: 'client.key', variable: 'CLIENT_KEY')
                     ]) {
-                        // Make deploy.sh executable
                         sh 'chmod +x k8s-manifests/deploy.sh'  // Update path if needed
-
-                        // Execute the deploy script
                         sh 'k8s-manifests/deploy.sh'  // Update path if needed
                     }
                 }
             }
         }
-        stage('Debug') {
-            steps {
-                script {
-                    sh 'echo KUBECONFIG: $KUBECONFIG'
-                    sh 'cat $KUBECONFIG'
-                }
-            }
-        }
+        // Other stages...
     }
     post {
         always {
