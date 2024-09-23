@@ -80,7 +80,7 @@ pipeline {
                         // Make deploy.sh executable if it's not already
                         sh 'chmod +x deploy.sh'
                         // Execute the deploy script
-                        sh './deploy.sh'
+                        sh '.k8s-manifests/deploy.sh'
                     }
                 }
             }
