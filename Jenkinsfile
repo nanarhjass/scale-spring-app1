@@ -91,7 +91,14 @@ pipeline {
             }
         }
     }
-    
+    stage('Debug') {
+    steps {
+        script {
+            sh 'echo $KUBE_CONFIG_FILE'
+            sh 'cat $KUBE_CONFIG_FILE'
+        }
+    }
+}
     post {
         always {
             sh 'echo Completed'
