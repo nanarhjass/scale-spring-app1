@@ -80,9 +80,7 @@ pipeline {
                     withCredentials([
                         file(credentialsId: 'ca.crt', variable: 'CA_CERT'),
                         file(credentialsId: 'client.crt', variable: 'CLIENT_CERT'),
-                        file(credentialsId: 'client.key', variable: 'CLIENT_KEY'),
-                        file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')
-                    ]) {
+                        file(credentialsId: 'client.key', variable: 'CLIENT_KEY'), {
                         // Make deploy.sh executable
                         sh 'chmod +x k8s-manifests/deploy.sh'  // Update path if needed
 
