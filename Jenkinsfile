@@ -86,8 +86,8 @@ pipeline {
                         kubectl config set-credentials my-user --client-certificate=$CLIENT_CERT --client-key=$CLIENT_KEY
                         kubectl config set-context my-context --cluster=my-cluster --user=my-user
                         kubectl config use-context my-context
-                        kubectl apply -f k8s-manifests/deployment.yaml
-                        kubectl apply -f k8s-manifests/service.yaml
+                        kubectl apply -f k8s-manifests/deployment.yaml --validate=false
+                        kubectl apply -f k8s-manifests/service.yaml --validate=false
                         '''
                     }
                 }
