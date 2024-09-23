@@ -10,7 +10,6 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerID'
         DOCKER_IMAGE = 'nanarh1/jenkinsproject'
         IMAGE_TAG = 'latest'
-        KUBECONFIG_CREDENTIALS = 'kubeconfig' // Replace with your secret ID for Kubeconfig
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '3')) 
@@ -77,13 +76,19 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withCredentials([file(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBE_CONFIG_FILE')]) {
-                        withEnv(["KUBECONFIG=$KUBE_CONFIG_FILE"]) {
-                            sh '''
-                            kubectl apply -f k8s-manifests/deployment.yaml || exit 1
-                            kubectl apply -f k8s-manifests/service.yaml || exit 1
-                            '''
-                        }
+                    withCredentials([
+                        file(credentialsId: 'ca.crt', variable: 'CA_CERT'),
+                        file(credentialsId: 'client.crt', variable: 'CLIENT_CERT'),
+                        file(credentialsId: 'client.key', variable: 'CLIENT_KEY')
+                    ]) {
+                        sh '''
+                        kubectl config set-cluster my-cluster --certificate-authority=$CA_CERT
+                        kubectl config set-credentials my-user --client-certificate=$CLIENT_CERT --client-key=$CLIENT_KEY
+                        kubectl config set-context my-context --cluster=my-cluster --user=my-user
+                        kubectl config use-context my-context
+                        kubectl apply -f k8s-manifests/deployment.yaml
+                        kubectl apply -f k8s-manifests/service.yaml
+                        '''
                     }
                 }
             }
