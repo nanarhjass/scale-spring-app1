@@ -83,6 +83,10 @@ pipeline {
 stage('Deploy to Kubernetes') {
     steps {
         script {
+            withCredentials([
+                        file(credentialsId: 'ca.crt', variable: 'CA_CERT'),
+                        file(credentialsId: 'client.crt', variable: 'CLIENT_CERT'),
+                        file(credentialsId: 'client.key', variable: 'CLIENT_KEY')
             withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                 // Make deploy.sh executable
                 sh 'chmod +x k8s-manifests/deploy.sh'  // Update path if needed
