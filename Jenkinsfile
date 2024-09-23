@@ -76,19 +76,11 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withCredentials([
-                        file(credentialsId: 'ca.crt', variable: 'CA_CERT'),
-                        file(credentialsId: 'client.crt', variable: 'CLIENT_CERT'),
-                        file(credentialsId: 'client.key', variable: 'CLIENT_KEY')
-                    ]) {
-                        sh '''
-                        kubectl config set-cluster my-cluster --certificate-authority=$CA_CERT
-                        kubectl config set-credentials my-user --client-certificate=$CLIENT_CERT --client-key=$CLIENT_KEY
-                        kubectl config set-context my-context --cluster=my-cluster --user=my-user
-                        kubectl config use-context my-context
-                        kubectl apply -f k8s-manifests/deployment.yaml --validate=false
-                        kubectl apply -f k8s-manifests/service.yaml --validate=false
-                        '''
+                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                        // Make deploy.sh executable if it's not already
+                        sh 'chmod +x deploy.sh'
+                        // Execute the deploy script
+                        sh './deploy.sh'
                     }
                 }
             }
@@ -97,8 +89,8 @@ pipeline {
         stage('Debug') {
             steps {
                 script {
-                    sh 'echo KUBECONFIG: $KUBE_CONFIG_FILE'
-                    sh 'cat $KUBE_CONFIG_FILE'
+                    sh 'echo KUBECONFIG: $KUBECONFIG'
+                    sh 'cat $KUBECONFIG'
                 }
             }
         }
