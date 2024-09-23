@@ -19,7 +19,7 @@ pipeline {
     parameters {
         choice(name: 'TARGET_ENV', choices: ['UAT', 'SIT', 'STAGING'], description: 'Pick something')
     }
- 
+
     stages {
         stage('Checkout SCM') {
             steps {
@@ -37,14 +37,12 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        
         stage('Package') {
             steps {
                 sh 'mvn package'
                 sh 'echo done'
             }
         }
-        
         stage('Build Docker Image') {
             steps {
                 script {
@@ -52,7 +50,6 @@ pipeline {
                 }
             }
         }
-
         stage('Login to Docker Hub') {
             steps {
                 script {
@@ -62,7 +59,6 @@ pipeline {
                 }
             }
         }
-
         stage('Push Docker Image') {
             steps {
                 script {
@@ -72,32 +68,30 @@ pipeline {
                 }
             }
         }
-
         stage('List Files in Workspace') {
-    steps {
-        sh 'ls -la'  // List all files
-        sh 'ls -la k8s-manifests'  // List files in the .k8s-manifests directory
-    }
-}
-
-stage('Deploy to Kubernetes') {
-    steps {
-        script {
-            withCredentials([
+            steps {
+                sh 'ls -la'  // List all files
+                sh 'ls -la k8s-manifests'  // List files in the k8s-manifests directory
+            }
+        }
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    withCredentials([
                         file(credentialsId: 'ca.crt', variable: 'CA_CERT'),
                         file(credentialsId: 'client.crt', variable: 'CLIENT_CERT'),
-                        file(credentialsId: 'client.key', variable: 'CLIENT_KEY')
-            withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                // Make deploy.sh executable
-                sh 'chmod +x k8s-manifests/deploy.sh'  // Update path if needed
+                        file(credentialsId: 'client.key', variable: 'CLIENT_KEY'),
+                        file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')
+                    ]) {
+                        // Make deploy.sh executable
+                        sh 'chmod +x k8s-manifests/deploy.sh'  // Update path if needed
 
-                // Execute the deploy script
-                sh 'k8s-manifests/deploy.sh'  // Update path if needed
+                        // Execute the deploy script
+                        sh 'k8s-manifests/deploy.sh'  // Update path if needed
                     }
                 }
             }
         }
-
         stage('Debug') {
             steps {
                 script {
