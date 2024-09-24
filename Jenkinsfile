@@ -4,13 +4,13 @@ pipeline {
         jdk 'jdk17'                   // Use JDK 17
         maven 'maven'                  // Use Maven
     }
-    withEnv {
+    environment {
         CHEIF_AUTHOR = 'Asher'         // Environment variable for author
         RETRY_CNT = 3                  // Retry count variable
         DOCKERHUB_CREDENTIALS = 'dockerID'  // DockerHub credentials ID
         DOCKER_IMAGE = 'nanarh1/jenkinsproject'  // Docker image
         IMAGE_TAG = 'latest'           // Docker image tag
-        KUBECONFIG_CREDENTIALS = 'kubeconfig3'  // Kubernetes kubeconfig credentials ID
+        KUBE_TOKEN = 'sha256~xoE4Jm92CgxhCTeazV5MDr8Dl6NZxi9b2hDVhp9dZEE'  // Kubernetes token
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '3'))   // Discard old builds to keep only 3
@@ -63,8 +63,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withCredentials([file(credentialsId: KUBECONFIG_CREDENTIALS, variable: 'KUBE_CONFIG_FILE')]) {
-                        withEnv(["KUBECONFIG=$KUBE_CONFIG_FILE"]) {
+                    withCredentials([string(credentialsId: 'kube_token', variable: 'KUBE_TOKEN')]) {
+                        withEnv(["KUBE_TOKEN=$KUBE_TOKEN"]) {
                             sh 'chmod +x k8s-manifests/deploy.sh'  // Make deploy script executable
                             sh './k8s-manifests/deploy.sh'         // Execute the deploy script
                         }
