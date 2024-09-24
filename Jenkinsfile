@@ -10,7 +10,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerID'  // DockerHub credentials ID
         DOCKER_IMAGE = 'nanarh1/jenkinsproject'  // Docker image
         IMAGE_TAG = 'latest'           // Docker image tag
-        KUBECONFIG_CREDENTIALS = 'kubeconfig'  // Kubernetes kubeconfig credentials ID
+        KUBECONFIG_CREDENTIALS = 'kubeconfig3'  // Kubernetes kubeconfig credentials ID
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '3'))   // Discard old builds to keep only 3
