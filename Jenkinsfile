@@ -10,7 +10,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerID'  // DockerHub credentials ID
         DOCKER_IMAGE = 'nanarh1/jenkinsproject'  // Docker image
         IMAGE_TAG = 'latest'           // Docker image tag
-        KUBE_TOKEN = 'sha256~xoE4Jm92CgxhCTeazV5MDr8Dl6NZxi9b2hDVhp9dZEE'  // Kubernetes token
+        KUBE_TOKEN = 'token'  // Kubernetes token
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '3'))   // Discard old builds to keep only 3
@@ -63,7 +63,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'kube_token', variable: 'KUBE_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'token', variable: 'KUBE_TOKEN')]) {
                         withEnv(["KUBE_TOKEN=$KUBE_TOKEN"]) {
                             sh 'chmod +x k8s-manifests/deploy.sh'  // Make deploy script executable
                             sh './k8s-manifests/deploy.sh'         // Execute the deploy script
