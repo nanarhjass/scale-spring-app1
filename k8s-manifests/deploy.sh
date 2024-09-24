@@ -11,7 +11,7 @@ fi
 
 # Deploy the application
 echo "Applying deployment manifest..."
-kubectl apply -f deployment.yaml
+kubectl apply -f ./k8s-manifests/deployment.yaml
 
 # Check if the deployment was successful
 if [ $? -ne 0 ]; then
@@ -20,7 +20,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Applying service manifest..."
-kubectl apply -f service.yaml
+kubectl apply -f ./k8s-manifests/service.yaml
 
 # Check if the service was successful
 if [ $? -ne 0 ]; then
