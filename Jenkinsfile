@@ -10,7 +10,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerID'
         DOCKER_IMAGE = 'nanarh1/jenkinsproject'
         IMAGE_TAG = 'latest'
-        KUBECONFIG_CREDENTIALS = 'kubeconfig1'  // Define your kubeconfig credentials ID
+        KUBECONFIG_CREDENTIALS = 'kubeconfig'  // Define your kubeconfig credentials ID
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '3')) 
