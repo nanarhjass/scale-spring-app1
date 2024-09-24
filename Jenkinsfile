@@ -10,7 +10,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerID'
         DOCKER_IMAGE = 'nanarh1/jenkinsproject'
         IMAGE_TAG = 'latest'
-        KUBECONFIG_CREDENTIALS = 'kubeconfig1'  // Define your kubeconfig credentials ID
+        KUBECONFIG_CREDENTIALS = 'kubeconfig'  // Define your kubeconfig credentials ID
 
         // Dynamically set kubeconfig file path based on OS
         KUBECONFIG_FILE = isUnix() ? '/home/ubuntu/.minikube/config' : 'C:\\Users\\jaspreetkaur\\.minikube\\config'
