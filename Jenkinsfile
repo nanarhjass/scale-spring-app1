@@ -10,10 +10,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerID'
         DOCKER_IMAGE = 'nanarh1/jenkinsproject'
         IMAGE_TAG = 'latest'
-        KUBECONFIG_CREDENTIALS = 'kubeconfig'  // Define your kubeconfig credentials ID
-
-        // Dynamically set kubeconfig file path based on OS
-        KUBECONFIG_FILE = isUnix() ? '/home/ubuntu/.minikube/config' : 'C:\\Users\\jaspreetkaur\\.minikube\\config'
+        KUBECONFIG_CREDENTIALS = 'kubeconfig1'  // Define your kubeconfig credentials ID
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '3')) 
@@ -31,16 +28,25 @@ pipeline {
                 sh "echo ${CHEIF_AUTHOR}"
             }
         }
-
-        // Other stages...
+        
+        stage('Install kubectl') {
+            steps {
+                sh '''
+                    if ! command -v kubectl &> /dev/null
+                    then
+                        curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+                        chmod +x ./kubectl
+                        sudo mv ./kubectl /usr/local/bin/kubectl
+                    fi
+                '''
+            }
+        }
 
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Dynamically pick kubeconfig file based on OS
-                    withCredentials([file(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBE_CONFIG_FILE')]) {
-                        // Set the KUBECONFIG environment variable for the current environment
-                        withEnv(["KUBECONFIG=${KUBECONFIG_FILE}"]) {
+                    withCredentials([file(credentialsId: KUBECONFIG_CREDENTIALS, variable: 'KUBE_CONFIG_FILE')]) {
+                        withEnv(["KUBECONFIG=$KUBE_CONFIG_FILE"]) {
                             sh 'chmod +x k8s-manifests/deploy.sh'  // Make deploy script executable
                             sh './k8s-manifests/deploy.sh'  // Execute the deploy script
                         }
@@ -48,8 +54,6 @@ pipeline {
                 }
             }
         }
-
-        // Other stages...
     }
 
     post {
