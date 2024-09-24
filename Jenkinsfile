@@ -59,14 +59,20 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Deploy to Kubernetes') { // Add a new stage for Kubernetes deployment
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'token', variable: 'KUBE_TOKEN')]) {
-                        // Export KUBE_TOKEN as an environment variable for kubectl commands
-                        env.KUBE_TOKEN = KUBE_TOKEN 
-                        sh "chmod +x ./k8s-manifests/deploy.sh"  // Make deploy script executable
-                        sh "./k8s-manifests/deploy.sh"         // Execute the deploy script
+                    // Use withCredentials to retrieve the kubeconfig file
+                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBE_CONFIG')]) {
+                        // Move the kubeconfig file to the expected location
+                        sh "mv \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig.yaml"
+                        
+                        // Set the KUBECONFIG environment variable to the path of the kubeconfig file
+                        env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig.yaml"
+
+                        // Make the deploy script executable and run it
+                        sh "chmod +x ./k8s-manifests/deploy.sh"
+                        sh "./k8s-manifests/deploy.sh" // Execute the deploy script
                     }
                 }
             }
