@@ -4,7 +4,7 @@ pipeline {
         jdk 'jdk17'                   // Use JDK 17
         maven 'maven'                  // Use Maven
     }
-    environment {
+    withEnv {
         CHEIF_AUTHOR = 'Asher'         // Environment variable for author
         RETRY_CNT = 3                  // Retry count variable
         DOCKERHUB_CREDENTIALS = 'dockerID'  // DockerHub credentials ID
