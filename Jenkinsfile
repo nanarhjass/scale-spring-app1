@@ -63,8 +63,10 @@ pipeline {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'token', variable: 'KUBE_TOKEN')]) {
-                        chmod +x ./k8s-manifests/deploy.sh  // Make deploy script executable
-                        ./k8s-manifests/deploy.sh         // Execute the deploy script
+                        // Export KUBE_TOKEN as an environment variable for kubectl commands
+                        env.KUBE_TOKEN = KUBE_TOKEN 
+                        sh "chmod +x ./k8s-manifests/deploy.sh"  // Make deploy script executable
+                        sh "./k8s-manifests/deploy.sh"         // Execute the deploy script
                     }
                 }
             }
