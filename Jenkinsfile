@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools {
         jdk 'jdk17'                   // Use JDK 17
-        maven 'maven'                  // Use Maven
+        maven 'maven'                 // Use Maven
     }
     environment {
         CHEIF_AUTHOR = 'Asher'         // Environment variable for author
@@ -10,7 +10,6 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerID'  // DockerHub credentials ID
         DOCKER_IMAGE = 'nanarh1/jenkinsproject'  // Docker image
         IMAGE_TAG = 'latest'           // Docker image tag
-        KUBE_TOKEN = credentials('token')  // Kubernetes token
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '3'))   // Discard old builds to keep only 3
@@ -53,7 +52,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"  // Login to DockerHub
+                        sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"  // Login to DockerHub
                         sh "docker push ${DOCKER_IMAGE}:${IMAGE_TAG}"                           // Push Docker image to registry
                     }
                 }
@@ -64,10 +63,8 @@ pipeline {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'token', variable: 'KUBE_TOKEN')]) {
-                        withEnv(["KUBE_TOKEN=$KUBE_TOKEN"]) {
-                            sh 'chmod +x k8s-manifests/deploy.sh'  // Make deploy script executable
-                            sh './k8s-manifests/deploy.sh'         // Execute the deploy script
-                        }
+                        sh 'chmod +x k8s-manifests/deploy.sh'  // Make deploy script executable
+                        sh "./k8s-manifests/deploy.sh"         // Execute the deploy script
                     }
                 }
             }
