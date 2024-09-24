@@ -69,6 +69,11 @@ pipeline {
                         
                         // Set the KUBECONFIG environment variable to the path of the kubeconfig file
                         env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig.yaml"
+                         // Debugging outputs
+                         // Debugging outputs
+                        sh "echo KUBECONFIG: \$KUBECONFIG"
+                        sh "cat \$KUBECONFIG"  // Check the contents of kubeconfig
+                        sh "curl -k https://192.168.49.2:8443"  // Check connectivity                   
 
                         // Make the deploy script executable and run it
                         sh "chmod +x ./k8s-manifests/deploy.sh"
