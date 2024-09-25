@@ -76,7 +76,7 @@ pipeline {
                         // Check connectivity                   
 
                         // Make the deploy script executable and run it
-                        sh "chmod +x ./k8s-manifests/deploy.sh"
+                        sh "chmod +x ./k8s-manifests/deploy.sh  --insecure-skip-tls-verify"
                         sh "./k8s-manifests/deploy.sh" // Execute the deploy script
                     }
                 }
