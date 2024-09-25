@@ -64,16 +64,13 @@ pipeline {
                 script {
                     // Use withCredentials to retrieve the kubeconfig file
                     withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBE_CONFIG')]) {
-                        // Create the target directory if it doesn't exist
-                        sh "mkdir -p '${env.WORKSPACE}/my dummy'"
-
                         // Move the kubeconfig file to the expected location
-                        sh "mv \$KUBE_CONFIG '${env.WORKSPACE}/my dummy/kubeconfig.yaml'"
-
-                        // Set the KUBECONFIG environment variable to the path of the kubeconfig file
-                        env.KUBECONFIG = "${env.WORKSPACE}/my dummy/kubeconfig.yaml"
+                        sh "mv \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig.yaml"
                         
-                        // Debugging outputs
+                        // Set the KUBECONFIG environment variable to the path of the kubeconfig file
+                        env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig.yaml"
+                         // Debugging outputs
+                         // Debugging outputs
                         sh "echo KUBECONFIG: \$KUBECONFIG"
                         sh "cat \$KUBECONFIG"  // Check the contents of kubeconfig
                         sh "curl -k https://192.168.49.2:8443"  // Check connectivity                   
@@ -92,4 +89,3 @@ pipeline {
             sh 'echo Pipeline Completed'  // Final message in the pipeline
         }
     }
-}
