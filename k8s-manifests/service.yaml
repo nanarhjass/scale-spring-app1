@@ -8,8 +8,8 @@ spec:
     app: my-app
   ports:
   - protocol: TCP
-    port: 8443          # Port exposed by the service
-    targetPort: 8443    # Port on the container
+    port: 80        # Port exposed by the service
+    targetPort: 8080   # Port on the container
     nodePort: 30008     # Port for external access (optional)
   type: NodePort
   # Use LoadBalancer if you're on a cloud provider like AWS/GCP
