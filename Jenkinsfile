@@ -1,5 +1,4 @@
-pipeline {
-    agent any
+ agent any
     tools {
         jdk 'jdk17'                   // Use JDK 17
         maven 'maven'                 // Use Maven
