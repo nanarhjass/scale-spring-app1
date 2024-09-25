@@ -59,6 +59,37 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernet
+        stage('Deploy to Kubernetes') { // Add a new stage for Kubernetes deployment
+            steps {
+                script {
+                    // Use withCredentials to retrieve the kubeconfig file
+                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBE_CONFIG')]) {
+                        // Create the target directory if it doesn't exist
+                        sh "mkdir -p '${env.WORKSPACE}/my dummy'"
 
+                        // Move the kubeconfig file to the expected location
+                        sh "mv \$KUBE_CONFIG '${env.WORKSPACE}/my dummy/kubeconfig.yaml'"
 
+                        // Set the KUBECONFIG environment variable to the path of the kubeconfig file
+                        env.KUBECONFIG = "${env.WORKSPACE}/my dummy/kubeconfig.yaml"
+                        
+                        // Debugging outputs
+                        sh "echo KUBECONFIG: \$KUBECONFIG"
+                        sh "cat \$KUBECONFIG"  // Check the contents of kubeconfig
+                        sh "curl -k https://192.168.49.2:8443"  // Check connectivity                   
+
+                        // Make the deploy script executable and run it
+                        sh "chmod +x ./k8s-manifests/deploy.sh"
+                        sh "./k8s-manifests/deploy.sh" // Execute the deploy script
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'echo Pipeline Completed'  // Final message in the pipeline
+        }
+    }
+}
