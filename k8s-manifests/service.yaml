@@ -2,12 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: my-app-service
-  namespace: my-app   # Ensure it's in the same namespace as the deployment
+  namespace: my-app
 spec:
   selector:
     app: my-app
   ports:
-    - protocol: TCP
-      port: 80        # External port
-      targetPort: 8443 # Port your app listens to inside the container
-  type: NodePort      # Use LoadBalancer if you're on a cloud provider like AWS/GCP
+  - protocol: TCP
+    port: 8080          # Port exposed by the service
+    targetPort: 8080    # Port on the container
+    nodePort: 30008     # Port for external access (optional)
+  type: NodePort
+  # Use LoadBalancer if you're on a cloud provider like AWS/GCP
