@@ -17,4 +17,4 @@ spec:
       - name: my-app-container
         image: nanarh1/jenkinsproject:latest  # Your Docker image
         ports:
-        - containerPort: 8080  # Adjust based on your application port
+        - containerPort: 8443 # Adjust based on your application port
