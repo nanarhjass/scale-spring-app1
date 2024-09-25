@@ -1,4 +1,5 @@
- agent any
+pipeline {
+    agent any
     tools {
         jdk 'jdk17'                   // Use JDK 17
         maven 'maven'                 // Use Maven
@@ -58,35 +59,6 @@
             }
         }
 
-        stage('Deploy to Kubernetes') { // Add a new stage for Kubernetes deployment
-            steps {
-                script {
-                    // Use withCredentials to retrieve the kubeconfig file
-                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBE_CONFIG')]) {
-                        // Move the kubeconfig file to the expected location
-                        sh "mv \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig.yaml"
-                        
-                        // Set the KUBECONFIG environment variable to the path of the kubeconfig file
-                        env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig.yaml"
-                         // Debugging outputs
-                         // Debugging outputs
-                        sh "echo KUBECONFIG: \$KUBECONFIG"
-                        sh "cat \$KUBECONFIG"  // Check the contents of kubeconfig
-                        sh "curl -k https://192.168.49.2:8443"  // Check connectivity                   
-
-                        // Make the deploy script executable and run it
-                        sh "chmod +x ./k8s-manifests/deploy.sh"
-                        sh "./k8s-manifests/deploy.sh" // Execute the deploy script
-                    }
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            sh 'echo Pipeline Completed'  // Final message in the pipeline
-        }
-    }
+        stage('Deploy to Kubernet
 
 
