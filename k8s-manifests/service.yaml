@@ -9,5 +9,5 @@ spec:
   ports:
     - protocol: TCP
       port: 80        # External port
-      targetPort: 8080  # Port your app listens to inside the container
+      targetPort: 8443 # Port your app listens to inside the container
   type: NodePort      # Use LoadBalancer if you're on a cloud provider like AWS/GCP
