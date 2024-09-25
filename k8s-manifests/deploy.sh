@@ -11,7 +11,7 @@ fi
 
 # Deploy the application
 echo "Applying deployment manifest..."
-kubectl apply -f ./k8s-manifests/deployment.yaml
+kubectl apply -f ./k8s-manifests/deployment.yaml  --insecure-skip-tls-verify
 
 # Check if the deployment was successful
 if [ $? -ne 0 ]; then
