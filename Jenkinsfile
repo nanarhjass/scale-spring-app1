@@ -65,10 +65,10 @@ pipeline {
                     // Use withCredentials to retrieve the kubeconfig file
                     withCredentials([file(credentialsId: 'kubeconfig1', variable: 'KUBE_CONFIG')]) {
                         // Move the kubeconfig file to the expected location
-                        sh "mv \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig1.yaml"
+                        sh "mv \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig.yaml"
                         
                         // Set the KUBECONFIG environment variable to the path of the kubeconfig file
-                        env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig1.yaml"
+                        env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig.yaml"
                         
                         // Debugging outputs
                         sh "echo KUBECONFIG: \$KUBECONFIG"
