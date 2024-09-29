@@ -63,7 +63,7 @@ pipeline {
             steps {
                 script {
                     // Use withCredentials to retrieve the kubeconfig file
-                    withCredentials([file(credentialsId: 'kubeconfig1', variable: 'KUBE_CONFIG')]) {
+                    withCredentials([file(credentialsId: 'kubectl1', variable: 'KUBE_CONFIG')]) {
                         // Move the kubeconfig file to the expected location
                         sh "mv \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig.yaml"
                         
