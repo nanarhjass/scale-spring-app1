@@ -8,7 +8,7 @@ pipeline {
         CHEIF_AUTHOR = 'Asher'         // Environment variable for author
         RETRY_CNT = 3                  // Retry count variable
         DOCKERHUB_CREDENTIALS = 'dockerID'  // DockerHub credentials ID
-        DOCKER_IMAGE = 'nanarh1/jenkinsproject'  // Docker image
+        DOCKER_IMAGE = 'nanarh1/myapp'  // Docker image
         IMAGE_TAG = 'latest'           // Docker image tag
     }
     options {
