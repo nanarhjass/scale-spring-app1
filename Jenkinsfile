@@ -59,31 +59,38 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') { // Add a new stage for Kubernetes deployment
+        stage('Deploy to Kubernetes') {
             steps {
                 script {
                     // Use withCredentials to retrieve the kubeconfig file
                     withCredentials([file(credentialsId: 'kubectl1', variable: 'KUBE_CONFIG')]) {
-                        // Move the kubeconfig file to the expected location
-                        sh "mv \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig.yaml"
+            
+                        // Debugging output to check if the file is retrieved
+                        sh "echo Kubeconfig file path: \$KUBE_CONFIG"
+                        sh "ls -la \$KUBE_CONFIG"  // List file to ensure it's in place
                         
-                        // Set the KUBECONFIG environment variable to the path of the kubeconfig file
+                        // Move the kubeconfig file to the workspace (optional if needed)
+                        sh "cp \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig.yaml"
+                        
+                        // Set the KUBECONFIG environment variable to the new location
                         env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig.yaml"
                         
                         // Debugging outputs
-                        sh "echo KUBECONFIG: \$KUBECONFIG"
-                        sh "cat \$KUBECONFIG"  // Check the contents of kubeconfig
-                        // Check connectivity                   
-
-                        // Make the deploy script executable and run it
+                        sh "echo KUBECONFIG is set to: \$KUBECONFIG"
+                        sh "cat \$KUBECONFIG"  // Display contents of kubeconfig for verification
+                        
+                        // Check Kubernetes connectivity (optional)
+                        sh "kubectl get nodes"
+            
+                        // Make the deployment script executable and run it
                         sh "chmod +x ./k8s-manifests/deploy.sh"
-                        sh "./k8s-manifests/deploy.sh --insecure-skip-tls-verify " // Execute the deploy script
+                        sh "./k8s-manifests/deploy.sh --insecure-skip-tls-verify"
                     }
                 }
             }
         }
     }
-
+    
     post {
         always {
             sh 'echo Pipeline Completed'  // Final message in the pipeline
