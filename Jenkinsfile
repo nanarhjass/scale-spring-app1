@@ -79,7 +79,8 @@ pipeline {
                         sh "cat \$KUBECONFIG"  // Display contents of kubeconfig for verification
                         
                         // Check Kubernetes connectivity (optional)
-                        sh "kubectl get nodes"
+                        sh "kubectl get nodes --insecure-skip-tls-verify"
+
             
                         // Make the deployment script executable and run it
                         sh "chmod +x ./k8s-manifests/deploy.sh"
