@@ -65,6 +65,7 @@ pipeline {
                     withCredentials([file(credentialsId: 'kubectl1', variable: 'KUBE_CONFIG')]) {
                         // Copy kubeconfig to a writable directory
                         sh "cp \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig.yaml"
+
                         
                         // Set the KUBECONFIG environment variable
                         env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig.yaml"
