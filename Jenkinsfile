@@ -69,10 +69,10 @@ pipeline {
                         sh "ls -la \$KUBE_CONFIG"  // List file to ensure it's in place
                         
                         // Move the kubeconfig file to a writable location
-                        sh "cp \$KUBE_CONFIG /var/lib/jenkins/kubeconfig.yaml"
+                        sh "cp \$KUBE_CONFIG /home/ubuntu/kubeconfig.yaml"
                         
                         // Set the KUBECONFIG environment variable to the new location
-                        env.KUBECONFIG = "/var/lib/jenkins/kubeconfig.yaml"
+                        env.KUBECONFIG = "/home/ubuntu/kubeconfig.yaml"
                         
                         // Debugging outputs
                         sh "echo KUBECONFIG is set to: \$KUBECONFIG"
