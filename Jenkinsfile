@@ -64,16 +64,15 @@ pipeline {
                 script {
                     // Use withCredentials to retrieve the kubeconfig file
                     withCredentials([file(credentialsId: 'kubectl1', variable: 'KUBE_CONFIG')]) {
-                        
                         // Debugging output to check if the file is retrieved
                         sh "echo Kubeconfig file path: \$KUBE_CONFIG"
                         sh "ls -la \$KUBE_CONFIG"  // List file to ensure it's in place
                         
                         // Move the kubeconfig file to a writable location
-                        sh "cp \$KUBE_CONFIG /home/ubuntu/kubeconfig.yaml"
+                        sh "cp \$KUBE_CONFIG /var/lib/jenkins/kubeconfig.yaml"
                         
                         // Set the KUBECONFIG environment variable to the new location
-                        env.KUBECONFIG = "/home/ubuntu/kubeconfig.yaml"
+                        env.KUBECONFIG = "/var/lib/jenkins/kubeconfig.yaml"
                         
                         // Debugging outputs
                         sh "echo KUBECONFIG is set to: \$KUBECONFIG"
@@ -81,7 +80,7 @@ pipeline {
                         
                         // Check Kubernetes connectivity (optional)
                         sh "kubectl get nodes"
-                        
+            
                         // Make the deployment script executable and run it
                         sh "chmod +x ./k8s-manifests/deploy.sh"
                         sh "./k8s-manifests/deploy.sh --insecure-skip-tls-verify"
