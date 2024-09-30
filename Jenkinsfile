@@ -60,22 +60,22 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: 'kubectl1', variable: 'KUBE_CONFIG')]) {
-                        // Copy kubeconfig to a writable directory
-                        sh "cp \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig.yaml"
+    steps {
+        script {
+            // Use withCredentials to retrieve the kubeconfig file
+            withCredentials([file(credentialsId: 'kubectl1', variable: 'KUBE_CONFIG')]) {
+                // Move the kubeconfig file to the workspace
+                sh "cp \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig.yaml"
+                
+                // Set the KUBECONFIG environment variable to the new location
+                env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig.yaml"
+                
+                // Debugging outputs
+                sh "echo KUBECONFIG is set to: \$KUBECONFIG"
+                sh "cat \$KUBECONFIG"  // Display contents of kubeconfig for verification
 
-                        
-                        // Set the KUBECONFIG environment variable
-                        env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig.yaml"
-                        
-                        // Check Kubernetes connectivity with insecure flag
-                        sh "kubectl get nodes --insecure-skip-tls-verify"
-                        
-                        // Make the deployment script executable and run it
-                        sh "chmod +x ./k8s-manifests/deploy.sh"
-                        sh "./k8s-manifests/deploy.sh --insecure-skip-tls-verify"
+                // Check Kubernetes connectivity
+                sh "kubectl get nodes --insecure-skip-tls-verify"
                     }
                 }
             }
