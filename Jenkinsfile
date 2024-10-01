@@ -64,8 +64,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    sh 'chmod +x ./deploy.sh'
-                    sh './deploy.sh'
+                    sh 'chmod +x k8s-manifests/deploy.sh'
+                    sh 'k8s-manifests/deploy.sh'
                 }
             }
         }
