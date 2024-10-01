@@ -1,5 +1,5 @@
 pipeline {
-    agent terraformslave
+    agent { label 'terraformslave' }
     tools {
         jdk 'jdk17'
         maven 'maven'
@@ -24,7 +24,9 @@ pipeline {
         stage('Checkout SCM') {
             steps {
                 checkout scm
-                sh "echo ${CHEIF_AUTHOR}"
+                script {
+                    echo "${CHEIF_AUTHOR}"
+                }
             }
         }
 
@@ -60,11 +62,10 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-    steps {
-        script {
-            sh 'chmod +x ./deploy.sh'
-            sh './deploy.sh'
-                    }
+            steps {
+                script {
+                    sh 'chmod +x ./deploy.sh'
+                    sh './deploy.sh'
                 }
             }
         }
