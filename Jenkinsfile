@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent terraformslave
     tools {
         jdk 'jdk17'
         maven 'maven'
@@ -62,20 +62,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
     steps {
         script {
-            // Use withCredentials to retrieve the kubeconfig file
-            withCredentials([file(credentialsId: 'kubectl1', variable: 'KUBE_CONFIG')]) {
-                // Move the kubeconfig file to the workspace
-                sh "cp \$KUBE_CONFIG ${env.WORKSPACE}/kubeconfig.yaml"
-                
-                // Set the KUBECONFIG environment variable to the new location
-                env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig.yaml"
-                
-                // Debugging outputs
-                sh "echo KUBECONFIG is set to: \$KUBECONFIG"
-                sh "cat \$KUBECONFIG"  // Display contents of kubeconfig for verification
-
-                // Check Kubernetes connectivity
-                sh "kubectl get nodes --insecure-skip-tls-verify"
+            sh 'chmod +x ./deploy.sh'
+            sh './deploy.sh'
                     }
                 }
             }
