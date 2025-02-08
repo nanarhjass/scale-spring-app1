@@ -6,7 +6,7 @@ pipeline {
     }
     environment {
         CHEIF_AUTHOR = 'Asher'
-        RETRY_CNT = 3
+        RETRY_CNT = 5
         DOCKERHUB_CREDENTIALS = 'dockerID'
         DOCKER_IMAGE = 'nanarh1/myapp'
         IMAGE_TAG = 'latest'
